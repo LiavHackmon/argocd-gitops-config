@@ -1,0 +1,36 @@
+# הגדרת Deployment בסיסי עבור Kubernetes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx-demo
+spec:
+  replicas: 2 # המצב הרצוי (Desired State): 2 Pods
+  selector:
+    matchLabels:
+      app: nginx-demo
+  template:
+    metadata:
+      labels:
+        app: nginx-demo
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest # האימג' אותו נרצה לפרוס
+        ports:
+        - containerPort: 80
+---
+# הגדרת Service כדי לחשוף את ה-Deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx-demo
+  ports:
+  - port: 80
+    targetPort: 80
+  # NodePort או LoadBalancer, מאפשר גישה חיצונית לקלאסטר
+  type: LoadBalancer
